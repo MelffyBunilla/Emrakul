@@ -9,12 +9,12 @@ from discord.ext import commands
 from urllib.error import HTTPError
 from datetime import date
 
-from .commands import Misc
+from ..message import Message
 
 class Colorpie(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.ctx = Misc(bot)
+        self.ctx = Message(bot)
         self.ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
         self.DIRECTORY = os.path.realpath(os.path.join(
             self.ROOT_DIR, "../../misc/"

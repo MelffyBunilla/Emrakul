@@ -9,13 +9,21 @@ from io import BytesIO
 
 from subprocess import check_output
 
+from discord import ForumChannel
 from discord.ext import tasks, commands
+
+from ..message import Message
 
 
 class Misc(commands.Cog):
     def __init__(self, bot):
         """Miscellaneous simple commands."""
         self.bot = bot
+        self.ctx = Message(bot)
+        self.ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+        self.FILE_NAME = os.path.realpath(os.path.join(
+            self.ROOT_DIR, "../../misc/spoiler_threads/threads.txt"
+        ))
 
     @commands.command()
     async def hello(self, ctx):
@@ -43,14 +51,14 @@ class Misc(commands.Cog):
         }
 
         if ctx.message.author.id in obey_dict.keys():
-            await self.send(ctx,obey_dict[ctx.message.author.id])
+            await self.ctx.send(ctx,obey_dict[ctx.message.author.id])
         else:
-            await self.send(ctx,"owo hi, ʰᵒʷ ʳ ᵘ")
+            await self.ctx.send(ctx,"owo hi, ʰᵒʷ ʳ ᵘ")
 
     @commands.command()
     async def addme(self, ctx):
         """The link to add Bolas to your Discord server."""
-        await self.send(ctx,"https://discordapp.com/oauth2/authorize?"
+        await self.ctx.send(ctx,"https://discordapp.com/oauth2/authorize?"
                        "client_id=850633920012877874&scope=bot&permissions=262144")
 
     async def fetch(url):
@@ -58,19 +66,75 @@ class Misc(commands.Cog):
                 session.get(url) as response:
             return await response
 
-    async def send(self, ctx, content=None, embed=None, file=None, delete_after=None):
-        context = {}
-        if content:
-            context['content'] = content
-        if embed:
-            context['embed'] = embed
-        if file:
-            context['file'] = file
-        if delete_after:
-            context['delete_after'] = delete_after
-        if not self.bot.dev_mode or ctx.message.author.id == 141131991218126848:
-            await ctx.send(**context)
-
+    @commands.command()
+    async def remove_news_channel(self, ctx):
+        "!remove_news_channel: Remove news channel. (Manage Channels Permission required)"
+        if ctx.message.author.guild_permissions.manage_channels:
+            guild_id = ctx.message.guild.id
+            with open(self.FILE_NAME) as file:
+                lines = file.readlines()
+                all_lines = ""
+                for line in lines:
+                    tmp_threads = line.rstrip().split(',')
+                    if not int(tmp_threads[0]) == guild_id:
+                        all_lines+= line.rstrip() + '\n'
+            threads_file = open(self.FILE_NAME, 'w')
+            threads_file.write(all_lines)
+            threads_file.close()
+            await self.ctx.send(ctx, "News Channel removed from Emmy.")
+        else:
+            await self.ctx.send(ctx, "You don't have the permissions to use this command.")
+    
+    @commands.command()
+    async def add_news_channel(self, ctx):
+        "!add_news_channel {Channel ID} {optional: Tag}: Add news channel. (Right click a channel, then click 'Copy ID') (Manage Channels Permission required)"
+        if ctx.message.author.guild_permissions.manage_channels:
+            args = ctx.message.content.split()        
+            if len(args) > 1:
+                try:
+                    parent_id = int(args[1])
+                    channel = ctx.message.guild.get_channel(parent_id)
+                    if isinstance(channel, ForumChannel):
+                        guild_id = ctx.message.guild.id
+                        with open(self.FILE_NAME) as file:
+                            lines = file.readlines()
+                            threads = []
+                            for line in lines:
+                                tmp_threads = line.rstrip().split(',')
+                                threads.append(int(tmp_threads[0]))
+                        if not guild_id in threads:
+                            threads_file = open(self.FILE_NAME, 'a+')
+                            thread = {
+                                "name": "Forum Channel added to News Command",
+                                "content": "This is a test thread, you can delete it if you want."
+                            }
+                            thread_info = str(guild_id) + ',' + str(parent_id)
+                            thread_tag_id = ""
+                            if len(args) > 2:
+                                for tag_id, tag in channel._available_tags.items():                            
+                                    if tag.name == args[2]:
+                                        thread_tag_id = ',' + str(tag.id)
+                                        thread["applied_tags"] = [channel.get_tag(tag.id)]
+                            try:
+                                thread, message = await channel.create_thread(**thread)
+                                try:
+                                    await thread.edit(archived=True)
+                                    threads_file.write(f"{thread_info}{thread_tag_id}\n")
+                                except discord.errors.Forbidden as e:
+                                    await thread.send("Missing channel permissions. (Emmy needs to manage posts)")
+                            except discord.errors.Forbidden as e:
+                                await self.ctx.send(ctx, "Missing channel permissions. (Emmy needs to create and manage posts)")
+                        else:
+                            await self.ctx.send(ctx, "You already added a News Channel to this Server.")
+                    else:
+                        await self.ctx.send(ctx, "The provided channel id is not a forum channel.")
+                except ValueError as e:
+                    await self.ctx.send(ctx, "Please provide a forum channel id. (Right click a channel, then click 'Copy ID')")            
+            else:
+                await self.ctx.send(ctx, "Please provide a forum channel id. (Right click a channel, then click 'Copy ID')")
+        else:
+            await self.ctx.send(ctx, "You don't have the permissions to use this command.")
+    
     @commands.command()
     async def updates(self, ctx):
         "Get the current updates on the Emrakul bot."
@@ -78,7 +142,7 @@ class Misc(commands.Cog):
         self.FILE_NAME = os.path.realpath(os.path.join(
             self.ROOT_DIR, "../../misc/updates/Emrakul-updates.txt"
         ))
-        await self.send(ctx,file=discord.File(self.FILE_NAME))
+        await self.ctx.send(ctx,file=discord.File(self.FILE_NAME))
 
     @commands.command()
     async def flirt(self, ctx):
@@ -111,8 +175,8 @@ class Misc(commands.Cog):
         self.FILE_NAME = os.path.realpath(os.path.join(
             self.ROOT_DIR, cute_choice[0]
         ))
-        await self.send(ctx,flirt_line[0])
-        await self.send(ctx,file=discord.File(self.FILE_NAME))
+        await self.ctx.send(ctx,flirt_line[0])
+        await self.ctx.send(ctx,file=discord.File(self.FILE_NAME))
 
     @commands.command()
     async def scryfall_extension(self, ctx):
@@ -126,13 +190,13 @@ class Misc(commands.Cog):
         install_guide += "3. Click in the top right on 'Developer mode'\n"
         install_guide += "4. Click 'Load unpacked'\n"
         install_guide += "5. Choose this .zip file, or folder if you unpacked it"
-        await self.send(ctx,install_guide)
-        await self.send(ctx,file=discord.File(self.FILE_NAME))
+        await self.ctx.send(ctx,install_guide)
+        await self.ctx.send(ctx,file=discord.File(self.FILE_NAME))
 
     @commands.command()
     async def asmor(self, ctx):
         "Asmoranomardicadaistinaculdacar"
-        await self.send(ctx,"Asmoranomardicadaistinaculdacar")
+        await self.ctx.send(ctx,"Asmoranomardicadaistinaculdacar")
 
     @commands.command()
     async def roll(self, ctx):
@@ -150,26 +214,26 @@ class Misc(commands.Cog):
                     try:
                         amount = int(dice_arr[0])
                     except ValueError as e:
-                        await self.send(ctx,"ö̴̲̳̼̯́̿͒ĥ̵͎̺̔̇̃̀͑̕ ̶̻̞̹̺͍̩̇͊̏̒̄͐͛͐̌̓n̷͖̪͌̀̄̑̓́̊̏͝o̴̡̲̺̭͙̖͉̝͎̪̎̂̈̍̓̈́ ̴̩͖̂̋͝w̴̱̭͖̲͍̓̿͌̓̀͋ͅh̸͍̣̣͒̔̂͛̊̽͝ȃ̷̡̨͎̖͍̞̪̣̪͑̌̄͊͌͛̀̚͝t̷͖͌ ̵̢͇̮̪͈̘͐́͑̆h̶͎̹̟̺̮̮̩̉̔͆̋̐͜͠ą̶͔̬̱̤̭̦͌̐͆̿̃̍͜͜ͅv̸̻̟͈̗̦̳̬̰̩́̄e̵̺͚̻͔̯̎͒̾ ̶̢̧̥̳̗̮̪̬̻̉͗͋̋̓͗͑̎̎ͅỳ̶͚̹͇̙̣̪̪͓͐̌̈́̽͑͝ő̴̧̟̜͔̘̥̠͋̀͐̀̆̎̾̇̏ú̸̡̡̫̟̻̼̰̺͙̐͋̐̚͠ ̵̢̳̣͈̾̈́͑̾͒̚͝d̷̤̥̱͉̒̌͌ọ̸̬̼͒̓̈̐̌̃̃̎̋͠-̷͓̀͊-̷̩̲̯͈̤̠̫̜͛̽͂̐͒͑͌͛͑-̶̧̞͖̼͔̙͓̗͔̥͆̊̅ ")
+                        await self.ctx.send(ctx,"ö̴̲̳̼̯́̿͒ĥ̵͎̺̔̇̃̀͑̕ ̶̻̞̹̺͍̩̇͊̏̒̄͐͛͐̌̓n̷͖̪͌̀̄̑̓́̊̏͝o̴̡̲̺̭͙̖͉̝͎̪̎̂̈̍̓̈́ ̴̩͖̂̋͝w̴̱̭͖̲͍̓̿͌̓̀͋ͅh̸͍̣̣͒̔̂͛̊̽͝ȃ̷̡̨͎̖͍̞̪̣̪͑̌̄͊͌͛̀̚͝t̷͖͌ ̵̢͇̮̪͈̘͐́͑̆h̶͎̹̟̺̮̮̩̉̔͆̋̐͜͠ą̶͔̬̱̤̭̦͌̐͆̿̃̍͜͜ͅv̸̻̟͈̗̦̳̬̰̩́̄e̵̺͚̻͔̯̎͒̾ ̶̢̧̥̳̗̮̪̬̻̉͗͋̋̓͗͑̎̎ͅỳ̶͚̹͇̙̣̪̪͓͐̌̈́̽͑͝ő̴̧̟̜͔̘̥̠͋̀͐̀̆̎̾̇̏ú̸̡̡̫̟̻̼̰̺͙̐͋̐̚͠ ̵̢̳̣͈̾̈́͑̾͒̚͝d̷̤̥̱͉̒̌͌ọ̸̬̼͒̓̈̐̌̃̃̎̋͠-̷͓̀͊-̷̩̲̯͈̤̠̫̜͛̽͂̐͒͑͌͛͑-̶̧̞͖̼͔̙͓̗͔̥͆̊̅ ")
             else:
                 number = args[1]
             if not number == "2":
                 result_amount = "a"
                 if amount > 1:
                     result_amount = "{}".format(amount)
-                await self.send(ctx,"*Emrakul rolls {} massive interdimensional d{}, {} Innistrad people are crushed under the weight*".format(result_amount, number, people))
+                await self.ctx.send(ctx,"*Emrakul rolls {} massive interdimensional d{}, {} Innistrad people are crushed under the weight*".format(result_amount, number, people))
             if table[0] > 0:
-                await self.send(ctx,"It fell off the plane **uwu**")
+                await self.ctx.send(ctx,"It fell off the plane **uwu**")
             else:
                 try:
                     if int(amount) > 20:
-                        await self.send(ctx,"....oh god they spilled all over I can't count all these....where's my favorite dice??? **>.<**")
+                        await self.ctx.send(ctx,"....oh god they spilled all over I can't count all these....where's my favorite dice??? **>.<**")
                     elif int(number) < 2:
                         if amount > 1:
                             result_amount = " {} times".format(amount)
-                        await self.send(ctx,"The dice landed on {}{}....what did you expect".format(number, amount))
+                        await self.ctx.send(ctx,"The dice landed on {}{}....what did you expect".format(number, amount))
                     elif int(number) == 2:
-                        await self.send(ctx,"Emrakul: (╯°□°）╯︵ ┻━┻")
+                        await self.ctx.send(ctx,"Emrakul: (╯°□°）╯︵ ┻━┻")
                         await self.flip(ctx)
                     else:
                         random_num = ""
@@ -182,16 +246,16 @@ class Misc(commands.Cog):
                         else:
                             result_txt = "Your result is {}".format(
                                 random_num[:-1])
-                        await self.send(ctx,result_txt)
+                        await self.ctx.send(ctx,result_txt)
                 except ValueError as e:
-                    await self.send(ctx,"ö̴̲̳̼̯́̿͒ĥ̵͎̺̔̇̃̀͑̕ ̶̻̞̹̺͍̩̇͊̏̒̄͐͛͐̌̓n̷͖̪͌̀̄̑̓́̊̏͝o̴̡̲̺̭͙̖͉̝͎̪̎̂̈̍̓̈́ ̴̩͖̂̋͝w̴̱̭͖̲͍̓̿͌̓̀͋ͅh̸͍̣̣͒̔̂͛̊̽͝ȃ̷̡̨͎̖͍̞̪̣̪͑̌̄͊͌͛̀̚͝t̷͖͌ ̵̢͇̮̪͈̘͐́͑̆h̶͎̹̟̺̮̮̩̉̔͆̋̐͜͠ą̶͔̬̱̤̭̦͌̐͆̿̃̍͜͜ͅv̸̻̟͈̗̦̳̬̰̩́̄e̵̺͚̻͔̯̎͒̾ ̶̢̧̥̳̗̮̪̬̻̉͗͋̋̓͗͑̎̎ͅỳ̶͚̹͇̙̣̪̪͓͐̌̈́̽͑͝ő̴̧̟̜͔̘̥̠͋̀͐̀̆̎̾̇̏ú̸̡̡̫̟̻̼̰̺͙̐͋̐̚͠ ̵̢̳̣͈̾̈́͑̾͒̚͝d̷̤̥̱͉̒̌͌ọ̸̬̼͒̓̈̐̌̃̃̎̋͠-̷͓̀͊-̷̩̲̯͈̤̠̫̜͛̽͂̐͒͑͌͛͑-̶̧̞͖̼͔̙͓̗͔̥͆̊̅ ")
+                    await self.ctx.send(ctx,"ö̴̲̳̼̯́̿͒ĥ̵͎̺̔̇̃̀͑̕ ̶̻̞̹̺͍̩̇͊̏̒̄͐͛͐̌̓n̷͖̪͌̀̄̑̓́̊̏͝o̴̡̲̺̭͙̖͉̝͎̪̎̂̈̍̓̈́ ̴̩͖̂̋͝w̴̱̭͖̲͍̓̿͌̓̀͋ͅh̸͍̣̣͒̔̂͛̊̽͝ȃ̷̡̨͎̖͍̞̪̣̪͑̌̄͊͌͛̀̚͝t̷͖͌ ̵̢͇̮̪͈̘͐́͑̆h̶͎̹̟̺̮̮̩̉̔͆̋̐͜͠ą̶͔̬̱̤̭̦͌̐͆̿̃̍͜͜ͅv̸̻̟͈̗̦̳̬̰̩́̄e̵̺͚̻͔̯̎͒̾ ̶̢̧̥̳̗̮̪̬̻̉͗͋̋̓͗͑̎̎ͅỳ̶͚̹͇̙̣̪̪͓͐̌̈́̽͑͝ő̴̧̟̜͔̘̥̠͋̀͐̀̆̎̾̇̏ú̸̡̡̫̟̻̼̰̺͙̐͋̐̚͠ ̵̢̳̣͈̾̈́͑̾͒̚͝d̷̤̥̱͉̒̌͌ọ̸̬̼͒̓̈̐̌̃̃̎̋͠-̷͓̀͊-̷̩̲̯͈̤̠̫̜͛̽͂̐͒͑͌͛͑-̶̧̞͖̼͔̙͓̗͔̥͆̊̅ ")
         else:
             dice = random.choices([4, 6, 8, 10, 12, 20])
-            await self.send(ctx,"*Emrakul rolls a massive interdimensional d{}, {} Innistrad townspeople are crushed by this dice*".format(dice[0], people))
+            await self.ctx.send(ctx,"*Emrakul rolls a massive interdimensional d{}, {} Innistrad townspeople are crushed by this dice*".format(dice[0], people))
             if table[0] > 0:
-                await self.send(ctx,"It fell off the table uwu")
+                await self.ctx.send(ctx,"It fell off the table uwu")
             else:
-                await self.send(ctx,random.randrange(1, dice[0]))
+                await self.ctx.send(ctx,random.randrange(1, dice[0]))
 
     @commands.command()
     async def flip(self, ctx):
@@ -199,12 +263,12 @@ class Misc(commands.Cog):
         side = random.choices([0, 1], [6000, 1])
         cat = random.choices([0, 1], [500, 1])
         people = random.randrange(1, 9999)
-        await self.send(ctx,"*Emrakul throws a coin on an interdimensional scale, {} Innistrad townspeople are crushed when the coin lands*".format(people))
+        await self.ctx.send(ctx,"*Emrakul throws a coin on an interdimensional scale, {} Innistrad townspeople are crushed when the coin lands*".format(people))
         if side[0] > 0:
-            await self.send(ctx,"The coin landed on its side (a 1:6000 chance)")
+            await self.ctx.send(ctx,"The coin landed on its side (a 1:6000 chance)")
         else:
             if cat[0] > 0:
-                await self.send(ctx,"Alms Collector stole your coin, you drew a card instead")
+                await self.ctx.send(ctx,"Alms Collector stole your coin, you drew a card instead")
             else:
                 start = random.choices([0, 1])
                 if start[0] > 0:
@@ -212,7 +276,7 @@ class Misc(commands.Cog):
                 else:
                     odds = [49, 51]
                 coin = random.choices(["heads", "tails"], odds)
-                await self.send(ctx,"The coin landed on {}".format(coin[0]))
+                await self.ctx.send(ctx,"The coin landed on {}".format(coin[0]))
 
     @commands.command()
     async def advice(self, ctx):
@@ -248,8 +312,8 @@ class Misc(commands.Cog):
                                  "Someone in here needs to go to bed.",
                                  "You're valid.",
                                  ])
-        await self.send(ctx,"*Emrakul wants to help you, but while starting to think she started to lean on the Innistrad plane, {} Innistrad townspeople were crushed due to that*".format(people))
-        await self.send(ctx,advice[0])
+        await self.ctx.send(ctx,"*Emrakul wants to help you, but while starting to think she started to lean on the Innistrad plane, {} Innistrad townspeople were crushed due to that*".format(people))
+        await self.ctx.send(ctx,advice[0])
 
     @commands.command()
     async def powerlevel(self, ctx):
@@ -282,26 +346,26 @@ class Misc(commands.Cog):
                                 "yedi",
                                 "сім",
                                 "bảy", ])
-        await self.send(ctx,"The deck has a power level of {} (7) out of 10.".format(seven[0]))
+        await self.ctx.send(ctx,"The deck has a power level of {} (7) out of 10.".format(seven[0]))
 
     @commands.command()
     async def cut(self, ctx):
         "Ask emmy for cut."
         land = random.choices(
             ["a plains", "an island", "a swamp", "a mountain", "a forest"])
-        await self.send(ctx,"You should cut {}.".format(land[0]))
+        await self.ctx.send(ctx,"You should cut {}.".format(land[0]))
 
     @commands.command()
     async def git(self, ctx):
         """Repo link."""
-        await self.send(ctx,"https://github.com/MelffyBunilla/Emrakul")
+        await self.ctx.send(ctx,"https://github.com/MelffyBunilla/Emrakul")
 
     @commands.command()
     async def stats(self, ctx):
         """Return the number of users and servers served."""
         users = list(self.bot.get_all_members())
 
-        await self.send(ctx,"Fetching cards for {} servers and {} users ({} unique users)".format(
+        await self.ctx.send(ctx,"Fetching cards for {} servers and {} users ({} unique users)".format(
             len(self.bot.guilds),
             len(users),
             len(set(users))
@@ -316,17 +380,17 @@ class Misc(commands.Cog):
 
         # Simply send out the url if no one was mentioned
         if not ctx.message.mentions:
-            await self.send(ctx,url)
+            await self.ctx.send(ctx,url)
 
         invite_message = "{} is inviting you to a videocall.\n{}".format(
             ctx.author.name,
             url
         )
 
-        await self.send(ctx.author,invite_message)
+        await self.ctx.send(ctx.author,invite_message)
 
         for mention in ctx.message.mentions:
-            await self.send(mention,invite_message)
+            await self.ctx.send(mention,invite_message)
 
 
 async def setup(bot):

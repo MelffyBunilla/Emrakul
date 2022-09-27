@@ -5,13 +5,13 @@ import urllib.request as request
 from discord.ext import commands
 from urllib.error import HTTPError
 
-from .commands import Misc
+from ..message import Message
 
 
 class Rule(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.ctx = Misc(bot)
+        self.ctx = Message(bot)
         self.ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
         self.FILE_NAME = os.path.realpath(os.path.join(
             self.ROOT_DIR, "../../misc/rules/MagicCompRules_20181005.txt"

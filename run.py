@@ -5,6 +5,9 @@ import asyncio
 from discord import Game, ActivityType, Intents
 from discord.ext import commands
 from secret import BOLAS_SECRET_TOKEN, DEV_ONLY
+from datetime import datetime, timedelta
+
+from src.spoilers import Spoilers
 
 logging.basicConfig(level=logging.INFO)
 token = BOLAS_SECRET_TOKEN
@@ -19,13 +22,27 @@ bot = commands.Bot(
     intents=intents)
 
 bot.dev_mode = DEV_ONLY
-
+news_start = datetime.now()
+news_started = False
 
 @bot.event
 async def on_ready():
+    global news_start, news_started
     game = Game("!help // !updates")
     await bot.change_presence(status=ActivityType.playing,
                               activity=game)
+
+    dt = datetime.now()
+    ts = news_start + timedelta(seconds=5)
+    spoilers = Spoilers(bot)
+
+    if not news_started:
+        news_started = True
+        spoilers.news_cycle.start()
+
+    if news_started and ts < dt:
+        news_start = ts
+        spoilers.news_cycle.restart()
 
 
 async def load_extensions():

@@ -1,6 +1,3 @@
-import asyncio
-import json
-import requests
 import aiohttp
 import os.path
 import urllib.request as request
@@ -8,95 +5,43 @@ import urllib.parse
 import pytz
 import discord
 
-from discord import Embed, File, ForumChannel
 from discord.ext import commands, tasks
 from urllib.parse import quote, quote_plus
 from datetime import datetime, timedelta
 from io import BytesIO
 
-from .commands import Misc
-
+from .message import Message
 
 class Spoilers(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
         self.FILE_NAME = os.path.realpath(os.path.join(
-            self.ROOT_DIR, "../../misc/spoiler_threads/threads.txt"
+            self.ROOT_DIR, "../misc/spoiler_threads/threads.txt"
         ))
-        self.task_start = datetime.now()
-        self.news_cycle.start()
-        self.restart_news_started = False
-        self.ctx = Misc(bot)
+        self.ctx = Message(bot)
 
-    @commands.command()
-    async def remove_news_channel(self, ctx):
-        "!remove_news_channel: Remove news channel. (Manage Channels Permission required)"
-        if ctx.message.author.guild_permissions.manage_channels:
-            guild_id = ctx.message.guild.id
-            with open(self.FILE_NAME) as file:
-                lines = file.readlines()
-                all_lines = ""
-                for line in lines:
-                    tmp_threads = line.rstrip().split(',')
-                    if not int(tmp_threads[0]) == guild_id:
-                        all_lines+= line.rstrip() + '\n'
-            threads_file = open(self.FILE_NAME, 'w')
-            threads_file.write(all_lines)
-            threads_file.close()
-            await self.ctx.send(ctx, "News Channel removed from Emmy.")
-        else:
-            await self.ctx.send(ctx, "You don't have the permissions to use this command.")
-    
-    @commands.command()
-    async def add_news_channel(self, ctx):
-        "!add_news_channel {Channel ID} {optional: Tag}: Add news channel. (Right click a channel, then click 'Copy ID') (Manage Channels Permission required)"
-        if ctx.message.author.guild_permissions.manage_channels:
-            args = ctx.message.content.split()        
-            if len(args) > 1:
-                try:
-                    parent_id = int(args[1])
-                    channel = ctx.message.guild.get_channel(parent_id)
-                    if isinstance(channel, ForumChannel):
-                        guild_id = ctx.message.guild.id
-                        with open(self.FILE_NAME) as file:
-                            lines = file.readlines()
-                            threads = []
-                            for line in lines:
-                                tmp_threads = line.rstrip().split(',')
-                                threads.append(int(tmp_threads[0]))
-                        if not guild_id in threads:
-                            threads_file = open(self.FILE_NAME, 'a+')
-                            thread = {
-                                "name": "Forum Channel added to News Command",
-                                "content": "This is a test thread, you can delete it if you want."
-                            }
-                            thread_info = str(guild_id) + ',' + str(parent_id)
-                            thread_tag_id = ""
-                            if len(args) > 2:
-                                for tag_id, tag in channel._available_tags.items():                            
-                                    if tag.name == args[2]:
-                                        thread_tag_id = ',' + str(tag.id)
-                                        thread["applied_tags"] = [channel.get_tag(tag.id)]
-                            try:
-                                thread, message = await channel.create_thread(**thread)
-                                try:
-                                    await thread.edit(archived=True)
-                                    threads_file.write(f"{thread_info}{thread_tag_id}\n")
-                                except discord.errors.Forbidden as e:
-                                    await thread.send("Missing channel permissions. (Emmy needs to manage posts)")
-                            except discord.errors.Forbidden as e:
-                                await self.ctx.send(ctx, "Missing channel permissions. (Emmy needs to create and manage posts)")
-                        else:
-                            await self.ctx.send(ctx, "You already added a News Channel to this Server.")
-                    else:
-                        await self.ctx.send(ctx, "The provided channel id is not a forum channel.")
-                except ValueError as e:
-                    await self.ctx.send(ctx, "Please provide a forum channel id. (Right click a channel, then click 'Copy ID')")            
-            else:
-                await self.ctx.send(ctx, "Please provide a forum channel id. (Right click a channel, then click 'Copy ID')")
-        else:
-            await self.ctx.send(ctx, "You don't have the permissions to use this command.")
+    @tasks.loop(minutes=5)
+    async def news_cycle(self):
+        await self.bot.wait_until_ready()
+        dt = datetime.now()
+        print(dt)
+        with open(self.FILE_NAME) as file:
+            lines = file.readlines()
+            threads = []
+            for line in lines:
+                tmp_threads = line.rstrip().split(',')
+                tmp_thread = {}
+                tmp_thread['guild_id'] = int(tmp_threads[0])
+                tmp_thread['parent_id'] = int(tmp_threads[1])
+                if len(tmp_threads) > 2:
+                    tmp_thread['tag_id'] = int(tmp_threads[2])
+                threads.append(tmp_thread)
+        for thread in threads:
+            print(thread['guild_id'])
+            await self.close_threads(thread['guild_id'], thread['parent_id'])
+            newspaper = await self.get_news()
+            print(newspaper)
 
     async def close_threads(self, guild_id, parent_id):
         guild = self.bot.get_guild(guild_id)
@@ -122,6 +67,7 @@ class Spoilers(commands.Cog):
         dt_previous = str(dt.timestamp())[:10]
         #api_url = f"https://api.pushshift.io/reddit/search/submission/?subreddit=magictcg&sort=asc&sort_type=created_utc&after={dt_previous}&before={dt_now}&size=1000"
         api_url = f"https://api.pushshift.io/reddit/search/submission/?subreddit=magictcg&sort=asc&sort_type=created_utc&after=1663487566&before={dt_now}&size=1000"
+        print(api_url)
         newspaper = []
         async with aiohttp.ClientSession() as session:
             async with session.get(api_url) as response:
@@ -216,41 +162,7 @@ class Spoilers(commands.Cog):
                             thread['files'] = tmp_dict
                     #await channel.create_thread(**thread)
 
-    @tasks.loop(minutes=5)
-    async def news_cycle(self):
-        await self.bot.wait_until_ready()
-        if not self.restart_news_started:
-            print("test")
-            self.restart_news_started = True
-            self.restart_news.restart()
-        with open(self.FILE_NAME) as file:
-            lines = file.readlines()
-            threads = []
-            for line in lines:
-                tmp_threads = line.rstrip().split(',')
-                tmp_thread = {}
-                tmp_thread['guild_id'] = int(tmp_threads[0])
-                tmp_thread['parent_id'] = int(tmp_threads[1])
-                if len(tmp_threads) > 2:
-                    tmp_thread['tag_id'] = int(tmp_threads[2])
-                threads.append(tmp_thread)
-        for thread in threads:
-            await self.close_threads(thread['guild_id'], thread['parent_id'])
-            newspaper = await self.get_news()
-            print(newspaper)
     
-    @tasks.loop(minutes=1)
-    async def restart_news(self):
-        print("test")
-        dt = datetime.now()
-        ts = self.task_start + timedelta(minutes=2)
-        print(ts)
-
-        if dt < ts:
-            self.restart_news_started = False
-            self.task_start = ts
-            self.news_cycle.restart()
-
 
 async def setup(bot):
     await bot.add_cog(Spoilers(bot))

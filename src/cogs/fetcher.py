@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 
 from ..scryfall import ScryFall
 from .archidekt import Archidekt
-from .commands import Misc
+from ..message import Message
 #from .spoilers import Spoilers
 
 
@@ -32,7 +32,7 @@ class Fetcher(commands.Cog):
         # self.get_product_news.start()
         self.pattern = re.compile("\[\[((?:[^\]]|\][^\]])+)\]\]")
         self.sc = ScryFall()
-        self.ctx = Misc(bot)
+        self.ctx = Message(bot)
         #self.news = Spoilers(bot)
         self.archidekt = Archidekt(bot)
         self.ROOT_DIR = os.path.dirname(os.path.abspath(__file__))

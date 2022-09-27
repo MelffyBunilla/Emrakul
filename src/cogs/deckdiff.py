@@ -8,14 +8,14 @@ from urllib.parse import urlsplit, urlunsplit, parse_qsl, urlencode
 from discord import Embed
 from discord.ext import commands
 
-from .commands import Misc
+from ..message import Message
 
 
 class Diff(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-        self.ctx = Misc(bot)
+        self.ctx = Message(bot)
         # Dict of valid url domains, and options for those domains
         self.valid_urls = {
             "deckstats.net": {

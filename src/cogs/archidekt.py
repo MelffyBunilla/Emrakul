@@ -11,7 +11,7 @@ from discord.ext import commands
 from urllib.parse import quote, quote_plus
 from urllib.error import HTTPError
 
-from .commands import Misc
+from ..message import Message
 from .tokens import Tokens
 
 class Archidekt(commands.Cog):
@@ -19,7 +19,7 @@ class Archidekt(commands.Cog):
         self.bot = bot
         self.pattern = re.compile("\[\[((?:[^\]]|\][^\]])+)\]\]")
         self.tokens = Tokens(bot)
-        self.ctx = Misc(bot)
+        self.ctx = Message(bot)
         self.ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
         self.DIRECTORY = os.path.realpath(os.path.join(
             self.ROOT_DIR, "../../misc/"

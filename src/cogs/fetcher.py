@@ -1,22 +1,15 @@
 import asyncio
-import json
 import re
 import random
 import os.path
-import urllib.request as request
-import urllib.parse
-import pytz
 
-from discord import Embed, File
-from discord.ext import commands, tasks
+from discord import Embed
+from discord.ext import commands
 from urllib.parse import quote, quote_plus
-from urllib.error import HTTPError
-from datetime import datetime, timedelta
 
 from ..scryfall import ScryFall
 from .archidekt import Archidekt
 from ..message import Message
-#from .spoilers import Spoilers
 
 
 class Fetcher(commands.Cog):
@@ -28,12 +21,9 @@ class Fetcher(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-        #self.task_start = datetime.now()
-        # self.get_product_news.start()
         self.pattern = re.compile("\[\[((?:[^\]]|\][^\]])+)\]\]")
         self.sc = ScryFall()
         self.ctx = Message(bot)
-        #self.news = Spoilers(bot)
         self.archidekt = Archidekt(bot)
         self.ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
         self.DIRECTORY = os.path.realpath(os.path.join(
@@ -67,13 +57,6 @@ class Fetcher(commands.Cog):
             return
 
         ctx = await self.bot.get_context(message)
-
-        # dt = datetime.now()
-        # ts = self.news.task_start + timedelta(minutes=2)
-
-        # if dt < ts:
-        #     self.news.task_start = ts
-        #     self.news.news_cycle.restart()
 
         archidekt_check = re.search(
             r"https:\/\/archidekt.com\/decks\/[0-9]+", ctx.message.content)
@@ -227,7 +210,7 @@ class Fetcher(commands.Cog):
             await self.ctx.send(ctx, "Only one card per command please.", delete_after=5)
             return
 
-        if(len(cards) > 1):
+        if (len(cards) > 1):
             for tmp in cards:
                 if cardname.lower() in tmp["name"].lower():
                     card = tmp
@@ -236,7 +219,7 @@ class Fetcher(commands.Cog):
         if card and attr in card:
             await self.ctx.send(ctx, card[attr])
         else:
-            await self.ctx.send(ctx, "Not found.", delete_after=5)    
+            await self.ctx.send(ctx, "Not found.", delete_after=5)
 
     @commands.command()
     async def art(self, ctx, *, arg=None):

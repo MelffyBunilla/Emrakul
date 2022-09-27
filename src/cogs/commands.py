@@ -1,16 +1,10 @@
 import os.path
 import discord
 import random
-import requests
 import aiohttp
-import urllib.parse
-from datetime import datetime, timedelta
-from io import BytesIO
-
-from subprocess import check_output
 
 from discord import ForumChannel
-from discord.ext import tasks, commands
+from discord.ext import commands
 
 from ..message import Message
 

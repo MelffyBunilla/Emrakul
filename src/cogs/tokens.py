@@ -1,15 +1,7 @@
-import asyncio
-import json
 import re
 import os.path
-import requests
-import random
-import urllib.request as request
 
-from discord import Embed, File
 from discord.ext import commands
-from urllib.parse import quote, quote_plus
-from urllib.error import HTTPError
 
 class Tokens(commands.Cog):
     def __init__(self, bot):

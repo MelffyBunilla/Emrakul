@@ -1,6 +1,5 @@
 import aiohttp
 import os.path
-import urllib.request as request
 import urllib.parse
 import pytz
 import discord

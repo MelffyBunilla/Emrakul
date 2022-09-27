@@ -4,7 +4,7 @@ import json
 import html
 import urllib.request as request
 
-from discord import Embed, File
+from discord import File
 from discord.ext import commands
 from urllib.error import HTTPError
 from datetime import date

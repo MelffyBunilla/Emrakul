@@ -91,17 +91,17 @@ class Rule(commands.Cog):
         "!rule {rule number or set of keywords.}: Cite an mtg rule."
         args = ctx.message.content.split()
         if len(args) > 1:
-            # Surround the result with markdown code tags (for nice bullets)
+            # Surround the result with markdown code tags (for nice bullets) 
             rule = ""
             if len(args) == 2:
                 rule += "<https://www.yawgatog.com/resources/magic-rules/#R{}>\n".format(
                     args[1].replace(".", ""))
             rule += "```markdown\n{}```".format(self.get_rule(args))
-            await self.ctx.send(ctx,rule)
+            await self.ctx.send(ctx, rule)
         else:
-            await self.ctx.send(ctx,"Please provide a rule number or a set of keywords."
-                           "See the full list of rules here: http://magic.wizards.com"
-                           "/en/game-info/gameplay/rules-and-formats/rules")
+            await self.ctx.send(ctx, "Please provide a rule number or a set of keywords."
+                                "See the full list of rules here: http://magic.wizards.com"
+                                "/en/game-info/gameplay/rules-and-formats/rules")
 
     @commands.command()
     async def rule_pdf(self, ctx):
@@ -116,7 +116,7 @@ class Rule(commands.Cog):
                 message = pdf_url[0]
         except HTTPError as e:
             message = e
-        await self.ctx.send(ctx,message)
+        await self.ctx.send(ctx, message)
 
 
 async def setup(bot):

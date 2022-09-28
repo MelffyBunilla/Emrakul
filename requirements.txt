@@ -6,7 +6,6 @@ cryptography==36.0.1
 git+https://github.com/Rapptz/discord.py
 idna==2.10
 multidict==4.7.6
-mysql-connector-python==8.0.27
 requests==2.10.0
 websockets==8.1
 yarl==1.4.2

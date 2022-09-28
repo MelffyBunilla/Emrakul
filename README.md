@@ -9,7 +9,7 @@
 
 Bolas is a mtg card-fetcher discord bot that is heavily inspired by [yawgmoth](https://github.com/Lerker3/yawgmoth).
 
-The docstring for each one of the plugins are all concatenated together and can be displayed with the hardcoded “!help” command.
+The docstring for each one of the plugins are all concatenated together and can be displayed with the hardcoded “!help” command. 
 
 ## List of commands
 

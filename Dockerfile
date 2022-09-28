@@ -2,9 +2,9 @@ FROM python:3.7-slim
 
 RUN apt-get update && apt-get install git gcc -y
 
-ADD . /bolas
+ADD . /src
 
-WORKDIR /bolas
+WORKDIR /src
 
 RUN pip install -r requirements.txt
 

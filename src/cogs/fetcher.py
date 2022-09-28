@@ -16,7 +16,7 @@ class Fetcher(commands.Cog):
     """
         [[Card Name]] to get a card.
         The fetcher supports the scryfall/magiccards.info syntax, so a query like [[t:goblin t:instant]] will return a goblin instant (tarfire)
-        To use the commands put the card name right after the command like so: '!art goblin welder'
+        To use the commands put the card name right after the command like so: '!art goblin welder' 
     """
 
     def __init__(self, bot):

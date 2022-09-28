@@ -2,6 +2,7 @@ import re
 
 from discord.ext import commands
 
+
 class Cleaner(commands.Cog):
     """
     Set up on a per server basis
@@ -22,14 +23,13 @@ class Cleaner(commands.Cog):
         }
         self.bot = bot
 
-
     @commands.Cog.listener("on_message")
     async def channel_cleaner(self, message):
 
         # Terminate execution if post is by itself
         if (message.author.bot):
             return
-        
+
         # Terminate execution when in PMs
         if message.guild is None:
             return
@@ -46,6 +46,7 @@ class Cleaner(commands.Cog):
 
         if (self.whitelist[message.guild.id][1].match(message.content)) is None:
             await message.delete()
+
 
 async def setup(bot):
     await bot.add_cog(Cleaner(bot))

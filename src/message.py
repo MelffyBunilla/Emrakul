@@ -1,5 +1,6 @@
 from discord.ext import commands
 
+
 class Message(commands.Cog):
     def __init__(self, bot):
         """Simple Discord Message Rewrite."""
@@ -17,6 +18,7 @@ class Message(commands.Cog):
             context['delete_after'] = delete_after
         if not self.bot.dev_mode or ctx.message.author.id == 141131991218126848:
             await ctx.send(**context)
+
 
 async def setup(bot):
     await bot.add_cog(Message(bot))

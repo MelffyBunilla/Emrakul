@@ -11,6 +11,7 @@ from io import BytesIO
 
 from .message import Message
 
+
 class Spoilers(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -108,10 +109,10 @@ class Spoilers(commands.Cog):
                             tmp_news['files'] = tmp_dict
                     newspaper.append(tmp_news)
         return newspaper
-    
+
     async def post_news_to_channels(self):
         """Get spoiler posts from reddit."""
-        
+
         dt = datetime.now()
         dt_now = str(dt.timestamp())[:10]
         dt = dt - timedelta(minutes=5)
@@ -159,9 +160,8 @@ class Spoilers(commands.Cog):
                                     i += 1
                         if len(tmp_dict) > 0:
                             thread['files'] = tmp_dict
-                    #await channel.create_thread(**thread)
+                    # await channel.create_thread(**thread)
 
-    
 
 async def setup(bot):
     await bot.add_cog(Spoilers(bot))

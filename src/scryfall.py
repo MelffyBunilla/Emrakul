@@ -57,19 +57,19 @@ class ScryFall:
         """Get a random card by QUERY"""
 
         url = self.API_URL + "/cards/search?q={}".format(parse.quote_plus(query)) + \
-        	"&-t:token&-layout:art_series&-t:card&\(-banned:vintage&or&t:conspiracy&or&o:ante&or&o:'one&foot'&or&Shahrazad\)"
+            "&-t:token&-layout:art_series&-t:card&\(-banned:vintage&or&t:conspiracy&or&o:ante&or&o:'one&foot'&or&Shahrazad\)"
 
         result = self._load_url_as_json(url)
 
         return result["total_cards"]
-    
+
     def card_random(self, query):
         """Get a random card by QUERY"""
 
         url = self.API_URL + "/cards/random?q={}".format(parse.quote_plus(query)) + \
-        	"&-t:token&-layout:art_series&-t:card&\(-banned:vintage&or&t:conspiracy&or&o:ante&or&o:'one&foot'&or&Shahrazad\)"
+            "&-t:token&-layout:art_series&-t:card&\(-banned:vintage&or&t:conspiracy&or&o:ante&or&o:'one&foot'&or&Shahrazad\)"
         search_url = self.API_URL + "/cards/search?q={}".format(parse.quote_plus(query)) + \
-        	"&-t:token&-layout:art_series&-t:card&\(-banned:vintage&or&t:conspiracy&or&o:ante&or&o:'one&foot'&or&Shahrazad\)"
+            "&-t:token&-layout:art_series&-t:card&\(-banned:vintage&or&t:conspiracy&or&o:ante&or&o:'one&foot'&or&Shahrazad\)"
 
         result = self._load_url_as_json(url)
         count_result = self._load_url_as_json(url)
@@ -79,7 +79,7 @@ class ScryFall:
             raise self.ScryfallException(result)
 
         return Card(result)
-    
+
     def card_named(self, name, exact=False):
         """Get a card named NAME"""
 
@@ -147,9 +147,9 @@ class ScryFall:
                 for obj in data:
 
                     # Ignore Alchemy cards
-                    if not alchemy and (obj["collector_number"].startswith("A-") or obj["set_type"]=="alchemy"):
+                    if not alchemy and (obj["collector_number"].startswith("A-") or obj["set_type"] == "alchemy"):
                         continue
-                        
+
                     # Ignore the art series cards
                     if obj["layout"] in layout_blacklist:
                         continue

@@ -1,4 +1,4 @@
-A few updates for the **Emrakul** bot over the past year. Sometimes Emrakul is sassy or just doesn't feel like things, so please don't take it personally.
+A few updates for the **Emrakul** bot over the past year. Sometimes Emrakul is sassy or just doesn't feel like things, so please don't take it personally. 
 
 Fixes compared to the Bolas bot:
 >> Regex works like on Scryfall

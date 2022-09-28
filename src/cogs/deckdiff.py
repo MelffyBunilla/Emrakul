@@ -51,7 +51,7 @@ class Diff(commands.Cog):
                     [
                         {"value": "export", "index": 4},
                         {"value": "text", "index": 5},
-                    ],
+                ],
                 'replace': [{"old": r"\.com/@\w+/", "new": ".com/"}],
             },
             "www.moxfield.com": {
@@ -61,7 +61,7 @@ class Diff(commands.Cog):
                         {"value": "v1", "index": 1},
                         {"value": "all", "index": 3},
                         {"value": "download", "index": 5},
-                    ],
+                ],
                 'replace': [{"old": "www.", "new": ""}],
                 'query': [("exportId", "{{exportId}}")],
                 'pre_request_paths':
@@ -73,7 +73,7 @@ class Diff(commands.Cog):
                                 {"origin_index": 4, "replace_index": 4},
                             ]
                         },
-                    ]
+                ]
             },
         }
 
@@ -144,15 +144,18 @@ class Diff(commands.Cog):
                 for replacement in pre_request_path["replace_map"]:
                     existing_path = baseurl[2].split("/")
                     new_path = path.split("/")
-                    new_path.insert(replacement["replace_index"], existing_path[replacement["origin_index"]])
+                    new_path.insert(
+                        replacement["replace_index"], existing_path[replacement["origin_index"]])
                     path = "/".join(new_path)
 
                 baseurl = baseurl[0:2]
                 baseurl.extend([path, '', ''])
                 baseurl = urlunsplit(baseurl)
 
-                target_result = self.get_special_query_arguments(baseurl, pre_request_path["target"])
-                replace_target = '%7B%7B' + pre_request_path["target"] + '%7D%7D'
+                target_result = self.get_special_query_arguments(
+                    baseurl, pre_request_path["target"])
+                replace_target = '%7B%7B' + \
+                    pre_request_path["target"] + '%7D%7D'
                 url_str = url_str.replace(replace_target, target_result)
 
             return url_str
@@ -165,7 +168,8 @@ class Diff(commands.Cog):
         try:
             # Should definitely split this into a few more lines
             files = (urllib.request.urlopen(
-                urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+                urllib.request.Request(
+                    url, headers={'User-Agent': 'Mozilla/5.0'})
             ).read().decode("utf-8", "replace"))
 
             data = json.loads(files)
@@ -175,7 +179,7 @@ class Diff(commands.Cog):
         except urllib.error.URLError as e:
             raise Diff.MessageError("Failed to open url.")
 
-    # Normalizes names.
+    # Normalizes names. 
     def filter_name(self, name):
         return self.name_replacements.get(name, name)
 
@@ -246,7 +250,8 @@ class Diff(commands.Cog):
 
     # Takes two moxfield urls and builds a compare url to return
     def build_moxfield_compare(self, url1, url2):
-        parts = [urlunsplit(url1).strip('/'), '/compare/', url2[2].split('/')[2]]
+        parts = [urlunsplit(url1).strip('/'), '/compare/',
+                 url2[2].split('/')[2]]
         result = ''.join(parts)
 
         return result
@@ -262,7 +267,8 @@ class Diff(commands.Cog):
             if len(urls) != 2:
                 raise Diff.MessageError("Exactly two urls are needed.")
 
-            raw_urls = [urlsplit(raw_url, scheme="https") for raw_url in url_input]
+            raw_urls = [urlsplit(raw_url, scheme="https")
+                        for raw_url in url_input]
 
             both_urls_moxfield = False
             if (raw_urls[0].netloc == raw_urls[1].netloc) and (raw_urls[0].netloc == 'www.moxfield.com'):
@@ -271,7 +277,7 @@ class Diff(commands.Cog):
             try:
                 # Should definitely split this into a few more lines
                 files = (urllib.request.urlopen(urllib.request.Request(u, headers={'User-Agent': 'Mozilla/5.0'}))
-                             .read().decode("utf-8", "replace")
+                         .read().decode("utf-8", "replace")
                          for u in urls)
                 decklists = [self.get_list(f) for f in files]
             except urllib.error.URLError as e:
@@ -289,15 +295,16 @@ class Diff(commands.Cog):
             # Discord doesn't allow embeds to be more than 1024 in length
             if len(result) < 1024:
                 if both_urls_moxfield:
-                    moxfield_compare_url = self.build_moxfield_compare(raw_urls[0], raw_urls[1])
-                    await self.ctx.send(ctx,moxfield_compare_url)
+                    moxfield_compare_url = self.build_moxfield_compare(
+                        raw_urls[0], raw_urls[1])
+                    await self.ctx.send(ctx, moxfield_compare_url)
 
-                await self.ctx.send(ctx,embed=result)
+                await self.ctx.send(ctx, embed=result)
             else:
-                await self.ctx.send(ctx,"Diff too long.")
+                await self.ctx.send(ctx, "Diff too long.")
 
         except Diff.MessageError as e:
-            return await(self.ctx.send(ctx,e.message))
+            return await(self.ctx.send(ctx, e.message))
 
 
 async def setup(bot):

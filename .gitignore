@@ -3,6 +3,7 @@ secret_token
 discord.log
 entries_dump.txt
 secret.py
+misc/spoiler_threads/threads.txt
 
 # Entries
 misc/entries.db

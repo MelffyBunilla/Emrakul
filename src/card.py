@@ -50,7 +50,7 @@ class Card(dict):
             return "**" + self.name + " (" + self.set.upper() + ")" + reserved + "**\n" + self._dict_to_string(self["prices"])
 
         return "Price not found."
-    
+
     def get_legality_string(self):
         "Return a formatted string of a card's legality"
         formats = [
@@ -68,7 +68,8 @@ class Card(dict):
                 if not k in formats:
                     self["legalities"].pop(k)
                 else:
-                    self["legalities"][k] = self["legalities"][k].replace("_"," ")                        
+                    self["legalities"][k] = self["legalities"][k].replace(
+                        "_", " ")
             return self._dict_to_string(self["legalities"])
 
         return "Legality not found."
@@ -77,12 +78,12 @@ class Card(dict):
         "Returns the hex code of the color of the card"
 
         hex_colors = {
-                "W": 0xe8e4db,
-                "U": 0xc1d8e9,
-                "B": 0x201720,
-                "R": 0xF79D74,
-                "G": 0xC2D6BF,
-            }
+            "W": 0xe8e4db,
+            "U": 0xc1d8e9,
+            "B": 0x201720,
+            "R": 0xF79D74,
+            "G": 0xC2D6BF,
+        }
 
         if ("colors" not in self or len(self["colors"]) == 0):
             # Gray for artifacts and lands
@@ -97,7 +98,7 @@ class Card(dict):
     def format_embed(self):
         "Returns a discord Embed object representing the card"
         name, oracle = str(self).split("\n", 1)
-        
+
         embed = Embed(title=name.replace("*", ""),
                       url=self["scryfall_uri"] if "scryfall_uri" in self else "",
                       description=oracle,
@@ -122,16 +123,16 @@ class Card(dict):
         if "loyalty" in self:
             self.oracle_text = "{0}\nStarting Loyalty: {1}".format(
                 self.oracle_text, self.loyalty)
-        
+
         reserved = "\n\nPart of the Reserved List" if self.reserved else ""
-        
+
         flavor = "\n*{0}*".format(
             self.flavor_text) if "flavor_text" in self else ""
 
         return "**{0}** {1}\n{2} {3}\n{4}{5}{6}\n\n".format(self.name,
-                                                           self.mana_cost,
-                                                           self.type_line,
-                                                           pt,
-                                                           self.oracle_text,
-                                                           flavor,
-                                                           reserved)
+                                                            self.mana_cost,
+                                                            self.type_line,
+                                                            pt,
+                                                            self.oracle_text,
+                                                            flavor,
+                                                            reserved)

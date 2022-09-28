@@ -25,6 +25,7 @@ bot.dev_mode = DEV_ONLY
 news_start = datetime.now()
 news_started = False
 
+
 @bot.event
 async def on_ready():
     global news_start, news_started

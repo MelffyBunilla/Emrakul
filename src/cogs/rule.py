@@ -13,9 +13,6 @@ class Rule(commands.Cog):
         self.bot = bot
         self.ctx = Message(bot)
         self.ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-        self.FILE_NAME = os.path.realpath(os.path.join(
-            self.ROOT_DIR, "../../misc/rules/MagicCompRules_20181005.txt"
-        ))
 
         self.RULE_LIMIT = 10
 

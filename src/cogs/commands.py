@@ -55,11 +55,6 @@ class Misc(commands.Cog):
         await self.ctx.send(ctx, "https://discordapp.com/oauth2/authorize?"
                             "client_id=850633920012877874&scope=bot&permissions=262144")
 
-    async def fetch(url):
-        async with aiohttp.ClientSession() as session, \
-                session.get(url) as response:
-            return await response
-
     @commands.command()
     async def remove_news_channel(self, ctx):
         "!remove_news_channel: Remove news channel. (Manage Channels Permission required)"
@@ -359,12 +354,13 @@ class Misc(commands.Cog):
     @commands.command()
     async def stats(self, ctx):
         """Return the number of users and servers served."""
-        users = list(self.bot.get_all_members())
+        users_count = 0
+        for guild in self.bot.guilds:
+            users_count+=guild.member_count
 
-        await self.ctx.send(ctx, "Fetching cards for {} servers and {} users ({} unique users)".format(
+        await self.ctx.send(ctx, "Fetching cards for {} servers and {} users".format(
             len(self.bot.guilds),
-            len(users),
-            len(set(users))
+            users_count
         ))
 
     @commands.command()

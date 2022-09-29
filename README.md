@@ -1,72 +1,195 @@
-[![Stats](https://img.shields.io/badge/discord-207%20servers%2015420%20unique%20users-blue.svg)](https://discordapp.com/oauth2/authorize?client_id=245372541915365377&scope=bot&permissions=0)
-[![Docker Pulls](https://img.shields.io/docker/pulls/neosloth/bolasbot.svg)](https://hub.docker.com/r/neosloth/bolasbot)
+[![Stats](https://img.shields.io/badge/discord-52%20servers%2028909%20users-blue.svg)](https://discordapp.com/oauth2/authorize?client_id=850633920012877874&scope=bot&permissions=262144)
 
 
-# Bolas
+# Emrakul
 
-[https://theneosloth.github.io/Bolas/](https://theneosloth.github.io/Bolas)
+[https://github.com/MelffyBunilla/Emrakul](https://github.com/MelffyBunilla/Emrakul)
 
 
-Bolas is a mtg card-fetcher discord bot that is heavily inspired by [yawgmoth](https://github.com/Lerker3/yawgmoth).
+Emrakul is a mtg card-fetcher discord bot that is heavily inspired by [Bolas](https://github.com/theneosloth/Bolas).
 
-The docstring for each one of the plugins are all concatenated together and can be displayed with the hardcoded “!help” command. 
+The docstring for each one of the plugins are all concatenated together and can be displayed with the hardcoded !help command. 
 
 ## List of commands
 
 ``` 
-A magic the gathering card fetcher bot
-
-Diff:
-  diff     List of differences between two decklists.
-Fetcher:
-  art      Return the art of a given card.
-  flavor   Return the flavor text of a given card.
-  image    Return the image of a given card.
-  price    Return the price of a given card.
-  reserved Return whether the given card is reserved.
-  rulings  Show all the rulings for a given card.
+Archidekt:
+  all_tokens           Returns tokens of all defined Archidekt lists of a user.
+  tokens               Return tokens of an Archidekt list.
+Colorpie:
+  colorpie             Get colorpie information.
+  colorpie_link        Get the links to the current Mechanical Color Pie Articles
 Misc:
-  addme    The link to add Bolas to your Discord server.
-  git      Repo link and changelog.
-  obey     Only works if you are one of the chosen ones.
-  stats    Return the number of users and servers served.
-  video    Create a new jitsi videocall with everyone mentioned.
+  hello                Only works if you are one of the chosen ones.
+  addme                The link to add Bolas to your Discord server.
+  remove_news_channel  !remove_news_channel: Remove news channel. (Manage Channels Permission required)
+  add_news_channel     !add_news_channel {Channel ID} {optional: Tag}: Add news channel. (Right click a channel, then click 'Copy ID') (Manage Channels Permission required)
+  updates              Get the current updates on the Emrakul bot.
+  flirt                Return the image of a given card.
+  scryfall_extension   Download a simple Chrome extension that restores the Magiccards.info function to auto-focus the search bar.
+  asmor                Asmoranomardicadaistinaculdacar
+  roll                 Roll any dice.
+  flip                 Flip a coin.
+  advice               Emrakul gives advice.
+  powerlevel           What's the power level?!
+  cut                  Ask emmy for cut.
+  git                  Repo link.
+  stats                Return the number of users and servers served.
+  video                Create a new jitsi videocall with everyone mentioned.
+Diff:
+  diff                 List of differences between two decklists.
+Fetcher:
+  art                  Return the art of a given card.
+  image                Return the image of a given card.
+  flavor               Return the flavor text of a given card.
+  reserved             Return whether the given card is reserved.
+  price                Return the price of a given card.
+  rulings              Show all the rulings for a given card.
+  legality             Return the legality of a given card.
+  cute                 Return the art of a cute card.
+  random               Return the image of a given card at random.
 Rule:
-  rule     !rule {rule number or set of keywords.}: Cite am mtg rule.
-​No Category:
-  help     Shows this message
-
-Type !help command for more info on a command.
-You can also type !help category for more info on a category
+  rule                 !rule {rule number or set of keywords.}: Cite an mtg rule.
+  rule_pdf             !rule_pdf Get the link to the current rule PDF
 ```
 
 ## How to run
 
-Export BOLAS_SECRET_TOKEN. Execute run.py.
+Execute run.py.
 
-```sh
-export BOLAS_SECRET_TOKEN=THIS-IS-A-SECRET
-python ./run.py
+## Add Emrakul to your Discord server
 
+[Click here](https://discordapp.com/oauth2/authorize?client_id=850633920012877874&scope=bot&permissions=262144)
+
+## Updates
+
+``` 
+A few updates for the **Emrakul** bot over the past year. Sometimes Emrakul is sassy or just doesn't feel like things, so please don't take it personally. 
+
+Fixes compared to the Bolas bot:
+>> Regex works like on Scryfall
+>> DFC cards now work for both the price command and by searching via [name] // [name]
+>> If you search something incorrectly, Emrakul only embarrasses you for 5...4...3...2...1 [poof]
+>> "sad robot", "bob" and "tim" now show the proper versions they reference
+
+BIG UPDATE: Emrakul now works with threads!
+
+New functions:
+1. Get the current updates on Emrakul bot
+Example: !updates
+>> Returns this text file
+
+2. Get tokens of a public decklist on archidekt
+Example: !tokens https://archidekt.com/decks/1875179#[EDH/B] Adeline, ♡ GRL PWR ♡
+>> This lists all tokens in your archidekt list. It shows even those that don't have a printed token, as it checks the text instead of just Scryfall data
+>> It only works with archidekt, mostly because other webpages show tokens so have less need
+
+3. Get tokens of the top [10] public decklists of a user on archidekt with [filter]
+Example 1: !all_tokens https://archidekt.com/user/2874
+Example 2: !all_tokens https://archidekt.com/user/2874 [EDH/B]
+Example 3: !all_tokens https://archidekt.com/user/2874 5
+>> This sends you a private message with the tokens in the top [10] public decklists of your user account
+>> By providing a link to your user account, you get the tokens of the top 10 last edited public decklists
+>> You can provide a filter for the titles of your decklist, like in the example above, I put [EDH/B] for all my built decklists, so I filter those. Also here, you will get a >> You can provide a number lower than 10 if you want less, but 10 will always be the maximum of 10 lists, due to performance issues (...it's 11 webcalls + checking through ~65-80 different cards per deck for tokens)
+
+4. Get a random card image [by a Scryfall Query]
+Example 1: !random
+Example 2: !random is:commander
+>> Returns a random card image within the query
+>> If no query is provided, it returns a random card
+
+5. Get a cute image
+Example: !cute
+>> Returns a cute card.
+>> It used to search for art:cute, but for some reason people didn't think they're cute, so I changed it to art:tentacles.
+>> That means it always returns an extra cute card
+
+6. Check legality of a card
+Example: !legality Black Lotus
+>> Returns the legality in formats
+
+7. Flirt with Emrakul
+Example: !flirt
+>> Emrakul notices you...from the moon
+
+8. Roll a dice
+Example 1: !roll
+Example 2: !roll d69
+>> Returns a random roll of the provided dice
+>> If no dice is provided, it chooses a random dice from among d4, d6, d8, d10, d12 and d20
+>> Sometimes things go wrong :(
+
+9. Flip a coin
+Example: !flip
+>> Returns heads or tails
+>> It takes a 50/50 split on heads or tails as the starting position, then returns the coin flip 51/49 in favor of that side, to emulate a physical coin flip
+>> Absolutely no reason why to implement this
+>> Due to this being a complicated physics experiment, you have a 1:6000 chance for the coin to land on its side, as Emrakul is flipping a US nickel
+>> I do assume earth gravity, even if Emrakul is somehow hidden in the moon of a plane
+>> Do we even know if the gravity on Magic's planes are all the same, or is this our biased view from earth
+
+10. Asmoranomardicadaistinaculdacar
+Example: !asmor
+>> Return Asmoranomardicadaistinaculdacar
+
+11. Download a simple Chrome extension that restores the Magiccards.info function to auto-focus the search bar.
+Example: !scryfall_extension
+>> Returns install instructions + a zip file with the appropriate files
+>> You can open those files and see what they do before installing, so you can be ensured I don't try to steal your personal info
+
+12. Get color pie information
+Example 1: !colorpie
+Example 2: !colorpie w
+Example 3: !colorpie u secondary
+Example 4: !colorpie black 1
+Example 5: !colorpie red tertiary
+>> Searches the latest color pie article, then returns the text as markdown in a message if it's short enough, and as a text file if not
+>> As you can see from above, you can shorten colors by their mana symbol (u = blue), and primary etc. as a number (secondary = 2)
+>> Any other queries will result in Emrakul asking you to provide any of the above possibilities
+>> Future updates will allow you to query and get definitions, but with different functions
+
+13. Get the color pie link
+Example: !colorpie_link
+>> Returns the current color pie article links by searching for them on the Magic Articles website
+
+14. Ask Emmy for advice
+Example: !advice [any text]
+>> Returns an Magic 8 Ball answer.
+>> Sometimes it returns just general advice.
+>> Sometimes it thinks you're valid.
+
+15. Calculate the power level of your deck
+Example: !powerlevel
+>> Returns 7.
+
+16. Ask Emmy for a cut in your deck
+Example: !cut
+>> Returns a typical card you would cut.
+
+Other updates:
+1. !rule has been upgraded in two ways:
+>> When calling the function, the bot checks if Wizards has added a new ruling document to their ruling page
+>> If yes, it replaces the current document
+>> Then it returns the ruling, and includes a link to the rule on Yawgatog (Hyperlinked Magic Comprehensive Rules)
+>> When a ruling is longer than the max amount of text that Discord allows, it cuts it off accordingly, which fixes !rule 205.3m
+
+2. When searching a card name via brackets [[Gishath]], I check first if a card that is a commander would be returned, and the name includes the exact text you provide.
+>> I noticed a lot of people search for a commander with the name, which often returns an entire list of cards
+>> This basically fixes this for useability, without disturbing too many searches, as it does not change searches that uses Scryfall syntax
+
+3. Added the functionalities that the Scryfall bot provides when searching:
+>> Basically you can now user either !price Gishath or [[$Gishath]]
+>> !price Gishath == [[$Gishath]]
+>> !rulings Gishath == [[?Gishath]]
+>> !legality Gishath == [[#Gishath]]
+
+4. The list of nicknames has been extended:
+>> Magus of the Cradle: Circle of Dreams Druid
+>> TWD: Walking Dead
+>> Streve: Strefan, Maurer Progenitor
+>> Ayaya: Ayara, First of Locthwain
+
+5. Due to high demand, you can [[Pot of Greed]]
+>> A lot of people are confused by this elusive card, so I provide help with this
+>> Returns the card text of Pot of Greed
 ```
-
-## Using docker
-
-The arm64v8 and amd64 images are available at [neosloth/bolasbot](https://hub.docker.com/r/neosloth/bolasbot). For other architectures the image can be built using the included Dockerfile
-
-### Building the image
-
-``` sh
-docker build --tag=bolasbot .
-```
-
-### Running Bolas
-
-``` sh
-docker run -e BOLAS_SECRET_TOKEN=THIS_IS_A_SECRET --name bolas --restart unless-stopped bolasbot
-
-```
-
-## Add Bolas to your Discord server
-
-[Click here](https://discordapp.com/oauth2/authorize?client_id=245372541915365377&scope=bot&permissions=0)

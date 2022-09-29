@@ -1,4 +1,4 @@
-[![Stats](https://img.shields.io/badge/discord-52%20servers%2028909%20users-blue.svg)](https://discordapp.com/oauth2/authorize?client_id=850633920012877874&scope=bot&permissions=262144)
+[![Stats](https://img.shields.io/badge/discord-52%20servers%2028912%20users-blue.svg)](https://discordapp.com/oauth2/authorize?client_id=850633920012877874&scope=bot&permissions=262144)
 
 
 # Emrakul
@@ -21,7 +21,7 @@ Colorpie:
   colorpie_link        Get the links to the current Mechanical Color Pie Articles
 Misc:
   hello                Only works if you are one of the chosen ones.
-  addme                The link to add Bolas to your Discord server.
+  addme                The link to add Emrakul to your Discord server.
   remove_news_channel  !remove_news_channel: Remove news channel. (Manage Channels Permission required)
   add_news_channel     !add_news_channel {Channel ID} {optional: Tag}: Add news channel. (Right click a channel, then click 'Copy ID') (Manage Channels Permission required)
   updates              Get the current updates on the Emrakul bot.

@@ -4,13 +4,13 @@ import asyncio
 
 from discord import Game, ActivityType, Intents
 from discord.ext import commands
-from secret import BOLAS_SECRET_TOKEN, DEV_ONLY
+from secret import EMRAKUL_SECRET_TOKEN, DEV_ONLY
 from datetime import datetime, timedelta
 
 from src.spoilers import Spoilers
 
 logging.basicConfig(level=logging.INFO)
-token = BOLAS_SECRET_TOKEN
+token = EMRAKUL_SECRET_TOKEN
 
 intents = Intents.default()
 intents.message_content = True

@@ -51,7 +51,7 @@ class Misc(commands.Cog):
 
     @commands.command()
     async def addme(self, ctx):
-        """The link to add Bolas to your Discord server."""
+        """The link to add Emrakul to your Discord server."""
         await self.ctx.send(ctx, "https://discordapp.com/oauth2/authorize?"
                             "client_id=850633920012877874&scope=bot&permissions=262144")
 

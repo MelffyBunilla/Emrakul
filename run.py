@@ -23,13 +23,12 @@ bot = commands.Bot(
     intents=intents)
 
 bot.dev_mode = DEV_ONLY
-news_start = datetime.now()
 news_started = False
 
 
 @bot.event
 async def on_ready():
-    global news_start, news_started
+    global news_started
     game = Game("!help // !updates")
     await bot.change_presence(status=ActivityType.playing,
                               activity=game)
@@ -37,20 +36,16 @@ async def on_ready():
     readme = ReadMe(bot)
     await readme.write_readme()
 
-    dt = datetime.now()
-    ts = news_start + timedelta(seconds=5)
     spoilers = Spoilers(bot)
+    dt = datetime.now()
+    dt_now = str(dt.timestamp())[:10]
+    await spoilers.write_spoilers_dt(dt_now)
 
     if not news_started:
         news_started = True
         spoilers.news_cycle.start()
 
-    if news_started and ts < dt:
-        print("restarted")
-        news_start = ts
-        spoilers.news_cycle.restart()
-
-
+        
 async def load_extensions():
     for filename in os.listdir("./src/cogs"):
         if filename.endswith(".py"):

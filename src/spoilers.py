@@ -41,23 +41,26 @@ class Spoilers(commands.Cog):
                     tmp_thread['tag_id'] = int(tmp_threads[2])
                 threads.append(tmp_thread)
         for thread in threads:
-            await self.close_threads(thread['guild_id'], thread['parent_id'])
+            await self.close_threads(thread['guild_id'], thread['parent_id'])            
             await self.post_news(thread, newspaper)
 
+    async def write_spoilers_dt(self, dt):
+        f = open(self.SPOILER_DT, "w")
+        f.write(str(dt))
+        f.close()
+    
     async def close_threads(self, guild_id, parent_id):
         guild = self.bot.get_guild(guild_id)
         guild_threads = await guild.active_threads()
         for thread in guild_threads:
-            if thread.parent_id == parent_id:
+            if thread.parent_id == parent_id and thread.auto_archive_duration:
                 dt = datetime.now().replace(tzinfo=pytz.UTC)
-
                 msg_dt = thread.created_at
                 if thread.last_message:
-                    message = thread.fetch_message(thread.last_message_id)
+                    message = await thread.fetch_message(thread.last_message_id)
                     msg_dt = message.edited_at
                 msg_dt = msg_dt + \
                     timedelta(minutes=thread.auto_archive_duration)
-
                 if not thread.flags.pinned and dt > msg_dt:
                     await thread.edit(archived=True)
 
@@ -78,7 +81,7 @@ class Spoilers(commands.Cog):
                 if value['link_flair_text'] == "Spoiler" and not "[deleted]" in value['selftext']:
                     curr_news_headlines = [d['name'] for d in newspaper]
                     dt_previous = value['created_utc']
-                    if not value['title'][:100] in curr_news_headlines:
+                    if not value['title'][:100] in curr_news_headlines:                        
                         tmp_news = {
                             "name": value['title'][:100],
                             "content": f"{urllib.parse.unquote(value['selftext'])}\n\n{value['full_link']}"[:2000],
@@ -112,9 +115,7 @@ class Spoilers(commands.Cog):
                             if len(tmp_dict) > 0:
                                 tmp_news['files'] = tmp_dict
                         newspaper.append(tmp_news)
-        f = open(self.SPOILER_DT, "w")
-        f.write(str(dt_previous))
-        f.close()
+        await self.write_spoilers_dt(dt_previous)
         return newspaper
 
     async def post_news(self, thread, newspaper):

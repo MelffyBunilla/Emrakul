@@ -16,7 +16,7 @@ class Rule(commands.Cog):
 
         self.RULE_LIMIT = 10
 
-    def get_rule(self, args):
+    def get_rule(self, args, limit=True):
         # First argument (presumably the rule number)
         num = args[1]
         # All the words after the command
@@ -32,7 +32,7 @@ class Rule(commands.Cog):
                 # and is not stored in memory
                 for i, line in enumerate(f):
                     if (line.startswith(str(num))):
-                        if len(line) >= 1923:
+                        if len(line) >= 1923 and limit:
                             return line[0:1923] + "..."
                         else:
                             return line
@@ -87,11 +87,17 @@ class Rule(commands.Cog):
         return file_name
 
     @commands.command()
+    async def embiggen(self, ctx):
+        rule = self.get_rule(["!rule", "205.3m"], False)
+        cr_count = rule.count(",") + 1
+        await self.ctx.send(ctx, f"Changelings are Brushwaggs >:(...except for when you use Artificial Evolution to change Human into Brushwagg on Werewolf Pack Leader that has every creature type through some means. In that case, there are {str(cr_count)} creature types in MTG")
+
+    @commands.command()
     async def rule(self, ctx):
         "!rule {rule number or set of keywords.}: Cite an mtg rule."
         args = ctx.message.content.split()
         if len(args) > 1:
-            # Surround the result with markdown code tags (for nice bullets) 
+            # Surround the result with markdown code tags (for nice bullets)
             rule = ""
             if len(args) == 2:
                 rule += "<https://www.yawgatog.com/resources/magic-rules/#R{}>\n".format(

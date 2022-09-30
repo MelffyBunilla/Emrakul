@@ -14,7 +14,6 @@ class ReadMe(commands.Cog):
             self.ROOT_DIR, "../README.md"
         ))
 
-
     async def write_readme(self):
         guilds_count = len(self.bot.guilds)
         users_count = 0
@@ -32,19 +31,18 @@ class ReadMe(commands.Cog):
 
         for cog_name in self.bot.cogs:
             if len(self.bot.cogs[cog_name].get_commands()) > 0:
-                emrakul_commands[cog_name] = []
+                emrakul_commands[cog_name] = {}
                 for command in self.bot.cogs[cog_name].get_commands():
                     if len(command.qualified_name) > command_name_len:
                         command_name_len = len(command.qualified_name)
-                    emrakul_commands[cog_name].append(
-                        [command.qualified_name, command.help])
+                    emrakul_commands[cog_name][command.qualified_name] = command.help
 
         command_name_len += 2
-        for cog_name, commands in emrakul_commands.items():
-            emrakul_help += f"\n{cog_name}:"
-            for command in commands:
-                spaces = " " * (command_name_len - len(command[0]))
-                emrakul_help += f"\n  {command[0]}{spaces}{command[1]}"
+        for k in sorted(emrakul_commands.keys()):
+            emrakul_help += f"\n{k}:"
+            for c_k in sorted(emrakul_commands[k].keys()):                
+                spaces = " " * (command_name_len - len(c_k))
+                emrakul_help += f"\n  {c_k}{spaces}{emrakul_commands[k][c_k]}"
 
         txt = f'''[![Stats](https://img.shields.io/badge/discord-{guilds_count}%20servers%20{users_count}%20users-blue.svg)]({emrakul_addme})
 

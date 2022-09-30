@@ -84,7 +84,7 @@ class Colorpie(commands.Cog):
 
     @commands.command()
     async def colorpie(self, ctx, *, search_str=""):
-        "Get colorpie information."
+        "{w 2 / white secondary} Get colorpie information."
         # args = ctx.message.content.split()
         if not search_str.strip() == "":
             search_arr = search_str.split()

@@ -88,13 +88,14 @@ class Rule(commands.Cog):
 
     @commands.command()
     async def embiggen(self, ctx):
+        "Returns the amount of creature types in case you figure out how to make Changeling happen with Embiggen."
         rule = self.get_rule(["!rule", "205.3m"], False)
         cr_count = rule.count(",") + 1
         await self.ctx.send(ctx, f"Changelings are Brushwaggs >:(...except for when you use Artificial Evolution to change Human into Brushwagg on Werewolf Pack Leader that has every creature type through some means. In that case, there are {str(cr_count)} creature types in MTG")
 
     @commands.command()
     async def rule(self, ctx):
-        "!rule {rule number or set of keywords.}: Cite an mtg rule."
+        "{rule number or set of keywords} Cite an mtg rule."
         args = ctx.message.content.split()
         if len(args) > 1:
             # Surround the result with markdown code tags (for nice bullets)
@@ -111,7 +112,7 @@ class Rule(commands.Cog):
 
     @commands.command()
     async def rule_pdf(self, ctx):
-        "!rule_pdf Get the link to the current rule PDF"
+        "Get the link to the current rule PDF"
         try:
             response = request.urlopen(
                 "https://magic.wizards.com/en/game-info/gameplay/rules-and-formats/rules")

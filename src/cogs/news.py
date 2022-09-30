@@ -19,7 +19,7 @@ class News(commands.Cog):
 
     @commands.command()
     async def remove_news_channel(self, ctx):
-        "!remove_news_channel: Remove news channel. (Manage Channels Permission required)"
+        "Remove news channel. (Manage Channels Permission required)"
         if ctx.message.author.guild_permissions.manage_channels:
             guild_id = ctx.message.guild.id
             with open(self.FILE_NAME) as file:
@@ -38,7 +38,7 @@ class News(commands.Cog):
 
     @commands.command()
     async def add_news_channel(self, ctx):
-        "!add_news_channel {Channel ID} {optional: Tag}: Add news channel. (Right click a channel, then click 'Copy ID') (Manage Channels Permission required)"
+        "{Channel ID} {optional: Tag} Add news channel. (Right click a channel, then click 'Copy ID') (Manage Channels Permission required)"
         if ctx.message.author.guild_permissions.manage_channels:
             args = ctx.message.content.split()
             if len(args) > 1:

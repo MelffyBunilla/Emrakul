@@ -47,7 +47,6 @@ class Fetcher(commands.Cog):
                                "ayaya": "Ayara, First of Locthwain",
                                "magus of the crucible": "Ramunap Excavator",
                                "drop of honey, but white": "Porphyry Nodes",
-                               "perry": "Perrie, the Pulverizer",
                                "perry, the platypus": "Perrie, the Pulverizer",
                                }
 
@@ -223,27 +222,39 @@ class Fetcher(commands.Cog):
 
     @commands.command()
     async def art(self, ctx, *, arg=None):
-        "Return the art of a given card."
+        "{Scryfall Syntax} Return the art of a given card."
         await self._post_card_attribute(ctx, arg, "image_art_crop")
 
     @commands.command()
     async def image(self, ctx, *, arg=None):
-        "Return the image of a given card."
+        "{Scryfall Syntax} Return the image of a given card."
         await self._post_card_attribute(ctx, arg, "image_normal")
 
     @commands.command()
     async def flavor(self, ctx, *, arg=None):
-        "Return the flavor text of a given card."
+        "{Scryfall Syntax} Return the flavor text of a given card."
         await self._post_card_attribute(ctx, arg, "flavor_text")
 
     @commands.command()
     async def reserved(self, ctx, *, arg=None):
-        "Return whether the given card is reserved."
+        "{Scryfall Syntax} Return whether the given card is reserved."
         await self._post_card_attribute(ctx, arg, "reserved")
 
     @commands.command()
+    async def nicknames(self, ctx, *, arg=None):
+        "Return the set of nicknames used for Emrakul."
+        nicknames = ""
+        i = 0
+        for name, card in self.CARD_NICKNAMES.items():
+            if i > 0:
+                nicknames+="\n"
+            nicknames+=f"{name} = {card}"
+            i+=1
+        await self.ctx.send(ctx, embed=Embed(title="Nicknames", description=nicknames))
+
+    @commands.command()
     async def price(self, ctx, *, arg=None):
-        "Return the price of a given card."
+        "{Scryfall Syntax} Return the price of a given card."
         if not arg:
             await self.ctx.send(ctx, "Please provide a card name after the command.", delete_after=5)
             return
@@ -264,7 +275,7 @@ class Fetcher(commands.Cog):
 
     @commands.command()
     async def rulings(self, ctx, *, arg=None):
-        "Show all the rulings for a given card."
+        "{Scryfall Syntax} Show all the rulings for a given card."
         if not arg:
             await self.ctx.send(ctx, "Please provide a card name after the command.", delete_after=5)
             return
@@ -290,7 +301,7 @@ class Fetcher(commands.Cog):
 
     @commands.command()
     async def legality(self, ctx, *, arg=None):
-        "Return the legality of a given card."
+        "{Scryfall Syntax} Return the legality of a given card."
         if not arg:
             await self.ctx.send(ctx, "Please provide a card name after the command.", delete_after=5)
             return
@@ -311,7 +322,7 @@ class Fetcher(commands.Cog):
 
     @commands.command()
     async def cute(self, ctx):
-        "Return the art of a cute card."
+        "{Scryfall Syntax} Return the art of a cute card."
         cute_choice = random.choices(
             population=["art:eldrazi", "art:emrakul",
                         "art:kozilek", "art:ulamog"]
@@ -322,7 +333,7 @@ class Fetcher(commands.Cog):
 
     @commands.command()
     async def random(self, ctx, *, arg="-t:card \(-banned:vintage or t:conspiracy or o:ante or o:'one foot' or Shahrazad\)"):
-        "Return the image of a given card at random."
+        "{Scryfall Syntax} Return the image of a given card at random."
         count = self.sc.get_count(arg)
         await self.ctx.send(ctx, "Random chance of 1:{}".format(count))
         card = self.sc.card_random(arg)

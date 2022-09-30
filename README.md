@@ -1,4 +1,4 @@
-[![Stats](https://img.shields.io/badge/discord-52%20servers%2028924%20users-blue.svg)](https://discordapp.com/oauth2/authorize?client_id=850633920012877874&scope=bot&permissions=262144)
+[![Stats](https://img.shields.io/badge/discord-52%20servers%2028925%20users-blue.svg)](https://discordapp.com/oauth2/authorize?client_id=850633920012877874&scope=bot&permissions=262144)
 
 
 # Emrakul
@@ -17,42 +17,43 @@ Archidekt:
   all_tokens           Returns tokens of all defined Archidekt lists of a user.
   tokens               Return tokens of an Archidekt list.
 Colorpie:
-  colorpie             Get colorpie information.
+  colorpie             {w 2 / white secondary} Get colorpie information.
   colorpie_link        Get the links to the current Mechanical Color Pie Articles
 Diff:
   diff                 List of differences between two decklists.
 Fetcher:
-  art                  Return the art of a given card.
-  cute                 Return the art of a cute card.
-  flavor               Return the flavor text of a given card.
-  image                Return the image of a given card.
-  legality             Return the legality of a given card.
-  price                Return the price of a given card.
-  random               Return the image of a given card at random.
-  reserved             Return whether the given card is reserved.
-  rulings              Show all the rulings for a given card.
+  art                  {Scryfall Syntax} Return the art of a given card.
+  cute                 {Scryfall Syntax} Return the art of a cute card.
+  flavor               {Scryfall Syntax} Return the flavor text of a given card.
+  image                {Scryfall Syntax} Return the image of a given card.
+  legality             {Scryfall Syntax} Return the legality of a given card.
+  nicknames            Return the set of nicknames used for Emrakul.
+  price                {Scryfall Syntax} Return the price of a given card.
+  random               {Scryfall Syntax} Return the image of a given card at random.
+  reserved             {Scryfall Syntax} Return whether the given card is reserved.
+  rulings              {Scryfall Syntax} Show all the rulings for a given card.
 Misc:
   addme                The link to add Emrakul to your Discord server.
-  advice               Emrakul gives advice.
-  asmor                Asmoranomardicadaistinaculdacar
+  advice               Emrakul gives advice and/or thinks you're valid.
+  asmor                Returns Asmoranomardicadaistinaculdacar
   cut                  Ask emmy for cut.
   flip                 Flip a coin.
-  flirt                Return the image of a given card.
+  flirt                Flirt with Emrakul, and Emrakul flirts back.
   git                  Repo link.
-  hello                Only works if you are one of the chosen ones.
+  hello                Wave to emmy, she's very cute. <3
   powerlevel           What's the power level?!
-  roll                 Roll any dice.
+  roll                 {2d69} Roll any (number of) dice.
   scryfall_extension   Download a simple Chrome extension that restores the Magiccards.info function to auto-focus the search bar.
   stats                Return the number of users and servers served.
   updates              Get the current updates on the Emrakul bot.
-  video                Create a new jitsi videocall with everyone mentioned.
+  video                Create a new jitsi videocall with everyone mentioned. (Legacy)
 News:
-  add_news_channel     !add_news_channel {Channel ID} {optional: Tag}: Add news channel. (Right click a channel, then click 'Copy ID') (Manage Channels Permission required)
-  remove_news_channel  !remove_news_channel: Remove news channel. (Manage Channels Permission required)
+  add_news_channel     {Channel ID} {optional: Tag} Add news channel. (Right click a channel, then click 'Copy ID') (Manage Channels Permission required)
+  remove_news_channel  Remove news channel. (Manage Channels Permission required)
 Rule:
-  embiggen             None
-  rule                 !rule {rule number or set of keywords.}: Cite an mtg rule.
-  rule_pdf             !rule_pdf Get the link to the current rule PDF
+  embiggen             Returns the amount of creature types in case you figure out how to make Changeling happen with Embiggen.
+  rule                 {rule number or set of keywords} Cite an mtg rule.
+  rule_pdf             Get the link to the current rule PDF
 ```
 
 ## How to run

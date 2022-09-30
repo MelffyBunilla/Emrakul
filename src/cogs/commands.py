@@ -15,7 +15,7 @@ class Misc(commands.Cog):
 
     @commands.command()
     async def hello(self, ctx):
-        """Only works if you are one of the chosen ones."""
+        """Wave to emmy, she's very cute. <3"""
 
         obey_dict = {
             # neosloth
@@ -60,7 +60,7 @@ class Misc(commands.Cog):
 
     @commands.command()
     async def flirt(self, ctx):
-        "Return the image of a given card."
+        "Flirt with Emrakul, and Emrakul flirts back."
         cute_choice = random.choices(["../../misc/emrablush.jpg",
                                       "../../misc/emrashy.png",
                                       ])
@@ -109,12 +109,12 @@ class Misc(commands.Cog):
 
     @commands.command()
     async def asmor(self, ctx):
-        "Asmoranomardicadaistinaculdacar"
+        "Returns Asmoranomardicadaistinaculdacar"
         await self.ctx.send(ctx, "Asmoranomardicadaistinaculdacar")
 
     @commands.command()
     async def roll(self, ctx):
-        "Roll any dice."
+        "{2d69} Roll any (number of) dice."
         args = ctx.message.content.split()
         table = random.choices([0, 1], [10, 1])
         people = random.randrange(1, 9999)
@@ -194,7 +194,7 @@ class Misc(commands.Cog):
 
     @commands.command()
     async def advice(self, ctx):
-        "Emrakul gives advice."
+        "Emrakul gives advice and/or thinks you're valid."
         args = ctx.message.content.split()
         people = random.randrange(1, 9999)
         advice = random.choices(["It is certain.",
@@ -288,7 +288,7 @@ class Misc(commands.Cog):
 
     @commands.command()
     async def video(self, ctx):
-        """Create a new jitsi videocall with everyone mentioned."""
+        """Create a new jitsi videocall with everyone mentioned. (Legacy)"""
         # Random 10 digit number
         call_id = str(random())[2:12]
         url = "https://meet.jit.si/{}".format(call_id)
